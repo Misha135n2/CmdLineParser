@@ -11,6 +11,7 @@ struct ExcpectedFlagAtBeginingException final : public std::exception {};
 struct ExpectedSpaceBeforeFlagException : public std::exception {};
 struct OutOfRangeException : public std::exception {};
 struct ItemNotFoundException : public std::exception {};
+struct InvalidQuotesException : public std::exception{};
 
 #define QUOTE_CHAR '"'
 #define DASH_SYMBOL '-'
@@ -440,6 +441,22 @@ inline ArgumentMap* ParseArguments(TCHAR* args)
 	// determination end
 
 	// cut off end
+
+	// count quotes
+	{
+		size_t quoteCount = 0;
+
+		for (TCHAR* chr = first; chr <= last; chr++)
+		{
+			TCHAR const ch = *chr;
+			if (ch == QUOTE_CHAR)
+				quoteCount++;
+		}
+
+		if (quoteCount % 2 != 0)
+			throw InvalidQuotesException();
+	}
+	// count end
 
 	// count the flags
 
